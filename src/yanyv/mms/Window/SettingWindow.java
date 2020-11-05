@@ -8,6 +8,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -346,12 +348,28 @@ public class SettingWindow extends JFrame {
 					input.setCount(count);
 					input.setFuhuo(fuhuoBox.isSelected());
 				} else {
+					Date startDate = startChooser.getDate();
+					Date deadDate = deadChooser.getDate();
+
+					Calendar startCal = Calendar.getInstance();
+					Calendar deadCal = Calendar.getInstance();
+					startCal.setTime(startDate);
+					deadCal.setTime(deadDate);
+					startCal.set(Calendar.HOUR_OF_DAY, 0);
+					deadCal.set(Calendar.HOUR_OF_DAY, 0);
+					startCal.set(Calendar.MINUTE, 0);
+					deadCal.set(Calendar.MINUTE, 0);
+					startCal.set(Calendar.SECOND, 0);
+					deadCal.set(Calendar.SECOND, 0);
+					startDate = startCal.getTime();
+					deadDate = deadCal.getTime();
+					
 					Match mat = new Match();
 					mat.setName(nameIn.getText());
 					mat.setCreaterUid(MainWindow.acc.getUid());
 					mat.setModeId(((MatchMode)modes.getSelectedItem()).getId());
-					mat.setStartDate(startChooser.getDate());
-					mat.setDeadline(deadChooser.getDate());
+					mat.setStartDate(startDate);
+					mat.setDeadline(deadDate);
 					try {
 						JSONObject result = MatchWeb.addMatchs(mat);
 						input.setMid(result.getString("mid"));

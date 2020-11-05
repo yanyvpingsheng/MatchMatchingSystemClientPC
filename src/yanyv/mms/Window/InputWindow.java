@@ -64,6 +64,9 @@ public class InputWindow extends JFrame {
 	JTextField nameInput;
 	JButton sure;
 	JButton apply;
+	
+	// web view
+	PicShower qrCode;
 
 	MatchWindow match;
 
@@ -130,6 +133,9 @@ public class InputWindow extends JFrame {
 		apply.setSize(100, 30);
 		apply.setLocation(345, 215);
 		apply.setFont(font);
+		
+		// web view
+		qrCode = new PicShower();
 
 		addListener();
 
@@ -140,6 +146,7 @@ public class InputWindow extends JFrame {
 		mainPane.add(nameInput);
 		mainPane.add(sure);
 		mainPane.add(apply);
+		mainPane.add(qrCode);
 
 		this.setContentPane(mainPane);
 
@@ -302,12 +309,10 @@ public class InputWindow extends JFrame {
 				painter.setFont(font);
 				painter.drawString(strs[0] + " " + strs[1] + " " + strs[2], 40, size - 7);
 
-				PicShower qrCode = new PicShower();
 				qrCode.setImg(img);
 
 				qrCode.setSize(size, size);
 				qrCode.setLocation(listPane.getLocation().x - listPane.getWidth(), listPane.getLocation().y);
-				mainPane.add(qrCode);
 			} catch (WriterException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
