@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import yanyv.mms.manager.JSONManager;
 import yanyv.mms.manager.SaveManager;
+import yanyv.mms.vo.Match;
 
 public class ConWindow extends JFrame {
 
@@ -47,8 +48,8 @@ public class ConWindow extends JFrame {
 	JButton open;
 	JButton del;
 
-	DefaultListModel<String> listModel;
-	JList<String> list;
+	DefaultListModel<Match> listModel;
+	JList<Match> list;
 
 	public ConWindow(JFrame mainWindow) {
 
@@ -72,8 +73,8 @@ public class ConWindow extends JFrame {
 		mainPane = new JPanel();
 		mainPane.setLayout(null);
 
-		listModel = new DefaultListModel<String>();
-		list = new JList<String>(listModel);
+		listModel = new DefaultListModel<Match>();
+		list = new JList<Match>(listModel);
 		list.setSize(300, 2000);
 		list.setFont(font);
 		
@@ -173,7 +174,11 @@ public class ConWindow extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				SaveManager.del(list.getSelectedValue());
+				if(list.getSelectedValue().isWeb()) {
+					
+				} else {
+					SaveManager.del(list.getSelectedValue().toString());
+				}
 				initList();
 			}
 			
@@ -181,7 +186,7 @@ public class ConWindow extends JFrame {
 	}
 
 	protected void showInfo() {
-		String name = list.getSelectedValue();
+		String name = list.getSelectedValue().toString();
 		info = SaveManager.getInfo(name);
 		JSONManager jm = new JSONManager(info);
 		title.setText(jm.getName());
@@ -208,8 +213,11 @@ public class ConWindow extends JFrame {
 		fileList = SaveManager.getFileList();
 		
 		for (File f : fileList) {
-			String name = f.getName();
-			listModel.addElement(name.split("\\.")[0]);
+			Match m = new Match();
+			m.setWeb(false);
+			m.setMatchfile(f);
+			listModel.addElement(m);
 		}
 	}
+	
 }

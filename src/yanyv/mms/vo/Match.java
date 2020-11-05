@@ -1,8 +1,11 @@
 package yanyv.mms.vo;
 
+import java.io.File;
 import java.util.Date;
 
 public class Match {
+	private boolean isWeb = false;
+	
 	private String mid;
 	private String name;
 	private int createrUid;
@@ -10,6 +13,8 @@ public class Match {
 	private Date startDate;
 	private Date endDate;
 	private Date deadline;
+	
+	private File matchfile;
 	
 	public String getMid() {
 		return mid;
@@ -53,4 +58,25 @@ public class Match {
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 	}
+	public File getMatchfile() {
+		return matchfile;
+	}
+	public void setMatchfile(File matchfile) {
+		this.matchfile = matchfile;
+	}
+	public boolean isWeb() {
+		return isWeb;
+	}
+	public void setWeb(boolean isWeb) {
+		this.isWeb = isWeb;
+	}
+	
+	public String toString() {
+		if(isWeb) {
+			return name;
+		} else {
+			return matchfile.getName().split("\\.")[0];
+		}
+	}
+	
 }
