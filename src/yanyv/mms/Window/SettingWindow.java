@@ -377,6 +377,7 @@ public class SettingWindow extends JFrame {
 					} catch (Exception e) {
 						e.printStackTrace();
 						JOptionPane.showMessageDialog(null, "Õ¯¬Á“Ï≥£, ∑¢≤º ß∞‹", "¥ÌŒÛ",JOptionPane.WARNING_MESSAGE);
+						return;
 					}
 				}
 				
