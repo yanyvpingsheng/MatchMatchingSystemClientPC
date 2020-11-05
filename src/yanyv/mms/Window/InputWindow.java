@@ -81,8 +81,9 @@ public class InputWindow extends JFrame {
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
 				if (!applyed) {
-					settingWindow.setVisible(true);
 					settingWindow.applyed = false;
+					settingWindow.setVisible(true);
+					if(web) settingWindow.setVisible(false);
 				}
 			}
 
