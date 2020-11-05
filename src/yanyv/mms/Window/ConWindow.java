@@ -8,12 +8,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 import yanyv.mms.manager.JSONManager;
 import yanyv.mms.manager.SaveManager;
 import yanyv.mms.vo.Match;
+import yanyv.mms.web.QueryWeb;
 
 public class ConWindow extends JFrame {
 
@@ -186,26 +189,31 @@ public class ConWindow extends JFrame {
 	}
 
 	protected void showInfo() {
-		String name = list.getSelectedValue().toString();
-		info = SaveManager.getInfo(name);
-		JSONManager jm = new JSONManager(info);
-		title.setText(jm.getName());
-		if(jm.getFuhuo()) {
-			fuhuo.setText("复活赛：是");
+		if(list.getSelectedValue().isWeb()) {
+			
 		} else {
-			fuhuo.setText("复活赛：否");
+			String name = list.getSelectedValue().toString();
+			info = SaveManager.getInfo(name);
+			JSONManager jm = new JSONManager(info);
+			title.setText(jm.getName());
+			if(jm.getFuhuo()) {
+				fuhuo.setText("复活赛：是");
+			} else {
+				fuhuo.setText("复活赛：否");
+			}
+			if(jm.getFinish()) {
+				finish.setText("已结束：是");
+			} else {
+				finish.setText("已结束：否");
+			}
+			date.setText("日  期：" + jm.getDate());
+			if(jm.getOnline()) {
+				online.setText("云存储：已启用");
+			} else {
+				online.setText("云存储：未启用");
+			}
 		}
-		if(jm.getFinish()) {
-			finish.setText("已结束：是");
-		} else {
-			finish.setText("已结束：否");
-		}
-		date.setText("日  期：" + jm.getDate());
-		if(jm.getOnline()) {
-			online.setText("云存储：已启用");
-		} else {
-			online.setText("云存储：未启用");
-		}
+		
 	}
 	
 	private void initList() {
@@ -217,6 +225,20 @@ public class ConWindow extends JFrame {
 			m.setWeb(false);
 			m.setMatchfile(f);
 			listModel.addElement(m);
+		}
+		
+		if(MainWindow.logined) {
+			try {
+				List<Match> matchList = QueryWeb.queryMatchsByUid(MainWindow.acc.getUid());
+				
+				for(Match m : matchList) {
+					m.setWeb(true);
+					listModel.addElement(m);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "网络异常，拉取比赛列表失败", "错误",JOptionPane.WARNING_MESSAGE);
+			}
 		}
 	}
 	

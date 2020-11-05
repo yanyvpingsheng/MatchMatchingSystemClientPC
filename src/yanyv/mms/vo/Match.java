@@ -13,6 +13,8 @@ public class Match {
 	private Date startDate;
 	private Date endDate;
 	private Date deadline;
+	private Date createDate;
+	private int state;
 	
 	private File matchfile;
 	
@@ -58,6 +60,21 @@ public class Match {
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
 	}
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		this.state = state;
+	}
+	
+	
+	
 	public File getMatchfile() {
 		return matchfile;
 	}
