@@ -236,11 +236,10 @@ public class SettingWindow extends JFrame {
 	private void init() {
 		if(MainWindow.logined) {
 			webBox.setEnabled(true);
+			addModes();
 		} else {
 			webBox.setEnabled(false);
 		}
-		
-		addModes();
 		
 	}
 

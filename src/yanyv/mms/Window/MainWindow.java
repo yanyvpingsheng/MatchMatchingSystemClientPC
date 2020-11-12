@@ -162,7 +162,6 @@ public class MainWindow extends JFrame {
 				
 				if(!logined) loginWin.setVisible(true);
 				else logout();
-				
 			}
 			
 		});

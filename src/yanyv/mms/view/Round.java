@@ -63,6 +63,7 @@ public class Round extends JPanel {
 		tit.setSize(this.getSize().width, 50);
 		tit.setLocation(0, 0);
 		tit.setFont(font);
+		tit.setOpaque(true);
 		this.add(tit);
 
 		titEdit = new JTextField();
@@ -106,6 +107,7 @@ public class Round extends JPanel {
 		tit.setSize(this.getSize().width, 50);
 		tit.setLocation(0, 0);
 		tit.setFont(font);
+		tit.setOpaque(true);
 		this.add(tit);
 
 		titEdit = new JTextField();
@@ -180,8 +182,8 @@ public class Round extends JPanel {
 				setNext(r);
 				r.setFuhuo();
 			}
-			refresh();
 		}
+		refresh();
 	}
 	
 	public void refresh() {
