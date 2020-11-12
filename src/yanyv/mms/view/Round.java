@@ -156,28 +156,32 @@ public class Round extends JPanel {
 
 		if (allfinish && !opening) {
 
-			if (fuhuo && round == 0)
-				fuhuo();
-			else if (fuhuo && round == 1) {
-				fuhuoend();
-			} else {
-				ArrayList<String> list = new ArrayList<String>();
-				for (Matching m : this.getM()) {
-					list.add(m.getWinner());
-				}
-
-				Round r = new Round(round + 1, list);
-				r.setJs(js);
-				if (list.size() > 1) {
-					this.getParent().add(r);
-					setNext(r);
-					r.setFuhuo();
-				}
-				refresh();
-			}
+			doNext();
 
 		}
 
+	}
+	
+	private void doNext() {
+		if (fuhuo && round == 0)
+			fuhuo();
+		else if (fuhuo && round == 1) {
+			fuhuoend();
+		} else {
+			ArrayList<String> list = new ArrayList<String>();
+			for (Matching m : this.getM()) {
+				if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(m.getWinner());
+			}
+
+			Round r = new Round(round + 1, list);
+			r.setJs(js);
+			if (list.size() > 1) {
+				this.getParent().add(r);
+				setNext(r);
+				r.setFuhuo();
+			}
+			refresh();
+		}
 	}
 	
 	public void refresh() {
@@ -192,9 +196,8 @@ public class Round extends JPanel {
 		ArrayList<String> list = new ArrayList<String>();
 		fuhuolist = new ArrayList<String>();
 		for (Matching m : this.getM()) {
-			if (m.getLoser() != null)
-				list.add(m.getLoser());
-			fuhuolist.add(m.getWinner());
+			if (m.getLoser() != null && !"".equals(m.getLoser())) list.add(m.getLoser());
+			if(m.getWinner() != null && !"".equals(m.getWinner())) fuhuolist.add(m.getWinner());
 		}
 
 		Round r = new Round(round + 1, list);
@@ -214,7 +217,7 @@ public class Round extends JPanel {
 	private void fuhuoend() {
 		ArrayList<String> list = new ArrayList<String>();
 		for (Matching m : this.getM()) {
-			list.add(m.getWinner());
+			if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(m.getWinner());
 		}
 
 		list.addAll(fuhuolist);
@@ -241,6 +244,10 @@ public class Round extends JPanel {
 					titEdit.setText(tit.getText());
 					tit.setVisible(false);
 					titEdit.setVisible(true);
+				}
+				
+				if(e.getButton() == 3) {
+					doNext();
 				}
 			}
 

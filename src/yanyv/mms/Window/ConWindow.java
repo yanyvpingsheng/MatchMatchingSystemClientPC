@@ -1,6 +1,5 @@
 package yanyv.mms.Window;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -18,8 +17,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import org.json.JSONObject;
 
 import yanyv.mms.manager.JSONManager;
 import yanyv.mms.manager.SaveManager;
@@ -168,6 +165,7 @@ public class ConWindow extends JFrame {
 				
 				main.setVisible(false);
 				match.setVisible(true);
+				
 				match.open(info);
 			}
 			
@@ -193,25 +191,31 @@ public class ConWindow extends JFrame {
 			
 		} else {
 			String name = list.getSelectedValue().toString();
-			info = SaveManager.getInfo(name);
-			JSONManager jm = new JSONManager(info);
-			title.setText(jm.getName());
-			if(jm.getFuhuo()) {
-				fuhuo.setText("复活赛：是");
+			if(list.getSelectedValue().isWeb()) {
+				
 			} else {
-				fuhuo.setText("复活赛：否");
+				info = SaveManager.getInfo(name);
+				
+				JSONManager jm = new JSONManager(info);
+				title.setText(jm.getName());
+				if(jm.getFuhuo()) {
+					fuhuo.setText("复活赛：是");
+				} else {
+					fuhuo.setText("复活赛：否");
+				}
+				if(jm.getFinish()) {
+					finish.setText("已结束：是");
+				} else {
+					finish.setText("已结束：否");
+				}
+				date.setText("日  期：" + jm.getDate());
+				if(jm.getOnline()) {
+					online.setText("云存储：已启用");
+				} else {
+					online.setText("云存储：未启用");
+				}
 			}
-			if(jm.getFinish()) {
-				finish.setText("已结束：是");
-			} else {
-				finish.setText("已结束：否");
-			}
-			date.setText("日  期：" + jm.getDate());
-			if(jm.getOnline()) {
-				online.setText("云存储：已启用");
-			} else {
-				online.setText("云存储：未启用");
-			}
+			
 		}
 		
 	}

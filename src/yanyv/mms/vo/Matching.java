@@ -129,20 +129,23 @@ public class Matching {
 
 		if (getP1().isWin()) {
 			return getP1().getText();
-		} else {
+		} else if(getP2().isWin()) {
 			return getP2().getText();
-		}
+		} else return null;
 	}
 
 	public String getLoser() {
 
 		if (getP2() == null)
 			return null;
-		if (getP1().isWin()) {
-			return getP2().getText();
-		} else {
+		if (!getP1().isWin() && !getP2().isWin()) return null;
+		if (!getP1().isWin()) {
 			return getP1().getText();
+		} else if(!getP2().isWin()){
+			return getP2().getText();
 		}
+		
+		return null;
 	}
 
 	public JSONArray save() {
