@@ -31,6 +31,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import yanyv.mms.view.PicShower;
+import yanyv.mms.web.IPConfig;
 
 public class InputWindow extends JFrame {
 
@@ -70,20 +71,24 @@ public class InputWindow extends JFrame {
 
 	MatchWindow match;
 
-	public InputWindow(SettingWindow settingWindow) {
+	public InputWindow(JFrame lastWindow) {
 
 		this.setTitle(name + "参赛人员登记");
 		this.setSize(windowWidth, windowHeight);
-		this.setLocationRelativeTo(settingWindow);
+		this.setLocationRelativeTo(lastWindow);
 
 		this.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
 				if (!applyed) {
-					settingWindow.applyed = false;
-					settingWindow.setVisible(true);
-					if(web) settingWindow.setVisible(false);
+					if(lastWindow.getClass().getName().equals("yanyv.mms.Window.SettingWindow")) {
+						((SettingWindow) lastWindow).applyed = false;
+						if(web) lastWindow.setVisible(false);
+					} else if(lastWindow.getClass().getName().equals("yanyv.mms.Window.ConWindow")) {
+						((ConWindow) lastWindow).applyed = false;
+					}
+					lastWindow.setVisible(true);
 				}
 			}
 
@@ -277,7 +282,7 @@ public class InputWindow extends JFrame {
 			listPane.setSize(listPane.getSize().width / 2, listPane.getSize().height);
 			listPane.setLocation(listPane.getLocation().x + listPane.getSize().width, listPane.getLocation().y);
 			
-			String url = "localhost:2020/enroll?mid=" + mid;
+			String url = IPConfig.IP + "/enroll?mid=" + mid;
 			
 			int size = 450;
 			Hashtable<EncodeHintType, String> hints = new Hashtable<>();

@@ -302,6 +302,13 @@ public class ConWindow extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				applyed = true;
 				if (list.getSelectedValue().isWeb()) {
+					InputWindow input = new InputWindow(main);
+					input.setMid(matchObj.getString("mid"));
+					input.setWeb(true);
+					
+					input.setVisible(true);
+					main.setVisible(false);
+					
 					/*if(matchObj.getInt("state") == 1) {
 						DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 						try {
