@@ -355,24 +355,23 @@ public class SettingWindow extends JFrame {
 					Date startDate = startChooser.getDate();
 					Date deadDate = deadChooser.getDate();
 					Date now = new Date();
-
+					Calendar startCal = Calendar.getInstance();
+					Calendar deadCal = Calendar.getInstance();
+					startCal.setTime(startDate);
+					deadCal.setTime(deadDate);
+					startCal.set(Calendar.HOUR_OF_DAY, 0);
+					deadCal.set(Calendar.HOUR_OF_DAY, 23);
+					startCal.set(Calendar.MINUTE, 0);
+					deadCal.set(Calendar.MINUTE, 59);
+					startCal.set(Calendar.SECOND, 0);
+					deadCal.set(Calendar.SECOND, 59);
+					startDate = startCal.getTime();
+					deadDate = deadCal.getTime();
 					if (now.after(deadDate)) {
 						JOptionPane.showMessageDialog(null, "截止日期早于当前时间", "错误", JOptionPane.WARNING_MESSAGE);
 					} else if (now.after(startDate)) {
 						JOptionPane.showMessageDialog(null, "开始日期早于当前时间", "错误", JOptionPane.WARNING_MESSAGE);
 					} else if (deadDate.before(startDate)) {
-						Calendar startCal = Calendar.getInstance();
-						Calendar deadCal = Calendar.getInstance();
-						startCal.setTime(startDate);
-						deadCal.setTime(deadDate);
-						startCal.set(Calendar.HOUR_OF_DAY, 0);
-						deadCal.set(Calendar.HOUR_OF_DAY, 0);
-						startCal.set(Calendar.MINUTE, 0);
-						deadCal.set(Calendar.MINUTE, 0);
-						startCal.set(Calendar.SECOND, 0);
-						deadCal.set(Calendar.SECOND, 0);
-						startDate = startCal.getTime();
-						deadDate = deadCal.getTime();
 
 						Match mat = new Match();
 						mat.setName(nameIn.getText());
