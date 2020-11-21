@@ -89,12 +89,18 @@ public class InputWindow extends JFrame {
 				if (!applyed) {
 					if (lastWindow.getClass().getName().equals("yanyv.mms.Window.SettingWindow")) {
 						((SettingWindow) lastWindow).applyed = false;
-						if (web)
+						if (web) {
+							lastWindow.setVisible(true);
 							lastWindow.setVisible(false);
+						} else {
+							lastWindow.setVisible(true);
+						}
+						
 					} else if (lastWindow.getClass().getName().equals("yanyv.mms.Window.ConWindow")) {
+						
 						((ConWindow) lastWindow).applyed = false;
+						lastWindow.setVisible(true);
 					}
-					lastWindow.setVisible(true);
 				}
 			}
 
@@ -351,14 +357,14 @@ public class InputWindow extends JFrame {
 			addToListLocal(name);
 		}
 	}
-	
+
 	private void addToListWeb(String name) {
 		String reg = "^[0-9]+(.[0-9]+)?$";
-		
-		if(name.matches(reg)) {
+
+		if (name.matches(reg)) {
 			try {
 				Account acc = QueryWeb.queryUserByUid(Integer.parseInt(name));
-				if(acc != null) {
+				if (acc != null) {
 					SignupWeb.Signup(acc.getUid(), mid);
 				}
 			} catch (Exception e) {
@@ -380,8 +386,7 @@ public class InputWindow extends JFrame {
 			progress.setText(incount + "/" + count);
 			nameInput.setText("");
 		} else {
-			JOptionPane.showMessageDialog(null, "参赛人员已满，" + name + " 未能加入到参赛人员列表中！", "警告",
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "参赛人员已满，" + name + " 未能加入到参赛人员列表中！", "警告", JOptionPane.WARNING_MESSAGE);
 		}
 	}
 }
