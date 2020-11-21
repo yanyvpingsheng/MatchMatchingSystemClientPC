@@ -292,7 +292,7 @@ public class InputWindow extends JFrame {
 			listPane.setSize(listPane.getSize().width / 2, listPane.getSize().height);
 			listPane.setLocation(listPane.getLocation().x + listPane.getSize().width, listPane.getLocation().y);
 
-			String url = IPConfig.IP + "/enroll?mid=" + mid;
+			String url = IPConfig.IP + "/signup?mid=" + mid;
 
 			int size = 450;
 			Hashtable<EncodeHintType, String> hints = new Hashtable<>();
