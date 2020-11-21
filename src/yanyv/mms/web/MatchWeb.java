@@ -53,4 +53,130 @@ public class MatchWeb {
 		
 		return result;
 	}
+	
+	public static JSONObject getMatchInfo(String mid) throws Exception {
+		String addMatchUrl = "http://" + IPConfig.IP + "/querymatchbymid";
+
+		URL url = new URL(addMatchUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		//OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "gbk");
+		out.write("mid=" + mid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString);
+		
+		return result;
+	}
+	
+	public static String getMatchMode(int mmid) throws Exception {
+		String addMatchUrl = "http://" + IPConfig.IP + "/querymatchmodebyid";
+
+		URL url = new URL(addMatchUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		//OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "gbk");
+		out.write("id=" + mmid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString).getJSONObject("data");
+		
+		String mode = result.getString("name");
+		
+		return mode;
+	}
+	
+	public static String getMatchState(int msid) throws Exception {
+		String addMatchUrl = "http://" + IPConfig.IP + "/querymatchstatebymsid";
+
+		URL url = new URL(addMatchUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		//OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "gbk");
+		out.write("msid=" + msid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString);
+		
+		String mode = result.getString("data");
+		
+		return mode;
+	}
+	
+	public static int getMatchSize(String mid) throws Exception {
+		String addMatchUrl = "http://" + IPConfig.IP + "/querysizebymid";
+
+		URL url = new URL(addMatchUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		//OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "gbk");
+		out.write("mid=" + mid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString);
+		
+		int size = result.getInt("data");
+		
+		return size;
+	}
 }
