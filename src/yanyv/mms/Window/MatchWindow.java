@@ -27,10 +27,12 @@ import org.json.JSONArray;
 import yanyv.mms.manager.JSONManager;
 import yanyv.mms.manager.SaveManager;
 import yanyv.mms.view.Round;
+import yanyv.mms.vo.Account;
 
 public class MatchWindow extends JFrame {
 	
-	ArrayList<String> list;
+	public static boolean isWeb = false;
+	ArrayList<Account> list;
 	
 	private String name = "";
 	private boolean fuhuo = false;
@@ -209,7 +211,7 @@ public class MatchWindow extends JFrame {
 	}
 	
 
-	public void setArray(ArrayList<String> list) {
+	public void setArray(ArrayList<Account> list) {
 		this.list = list;
 		
 		init();
@@ -330,5 +332,9 @@ public class MatchWindow extends JFrame {
 		this.setFuhuo(jm.getFuhuo());
 		this.addListener();
 		
+	}
+	
+	public void setWeb(boolean web) {
+		this.isWeb = web;
 	}
 }

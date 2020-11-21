@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import yanyv.mms.Window.MatchWindow;
+import yanyv.mms.vo.Account;
 import yanyv.mms.vo.Matching;
 
 public class Round extends JPanel {
@@ -37,8 +38,8 @@ public class Round extends JPanel {
 	int round = 0;
 	private ArrayList<Matching> m;
 
-	ArrayList<String> fuhuolist;
-	ArrayList<String> list;
+	ArrayList<Account> fuhuolist;
+	ArrayList<Account> list;
 
 	private Font font = new Font("¿¬Ìå", Font.BOLD, 30);
 	String title = "";
@@ -47,7 +48,7 @@ public class Round extends JPanel {
 		
 	}
 
-	public Round(int round, ArrayList<String> list) {
+	public Round(int round, ArrayList<Account> list) {
 		this.round = round;
 		this.list = list;
 
@@ -131,10 +132,10 @@ public class Round extends JPanel {
 			
 			if(matchs.getJSONArray(i).getJSONObject(0).getBoolean("won")) {
 				match.getP1().setWin(true);
-				match.win(new Person(matchs.getJSONArray(i).getJSONObject(0).getString("name")));
+				match.win(new Person(new Account(matchs.getJSONArray(i).getJSONObject(0).getString("name"))));
 			} else if(matchs.getJSONArray(i).getJSONObject(1).getBoolean("won")) {
 				match.getP2().setWin(true);
-				match.win(new Person(matchs.getJSONArray(i).getJSONObject(1).getString("name")));
+				match.win(new Person(new Account(matchs.getJSONArray(i).getJSONObject(1).getString("name"))));
 			}
 			
 		}
@@ -170,9 +171,9 @@ public class Round extends JPanel {
 		else if (fuhuo && round == 1) {
 			fuhuoend();
 		} else {
-			ArrayList<String> list = new ArrayList<String>();
+			ArrayList<Account> list = new ArrayList<Account>();
 			for (Matching m : this.getM()) {
-				if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(m.getWinner());
+				if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(new Account(m.getWinner()));
 			}
 
 			Round r = new Round(round + 1, list);
@@ -195,11 +196,11 @@ public class Round extends JPanel {
 	}
 
 	private void fuhuo() {
-		ArrayList<String> list = new ArrayList<String>();
-		fuhuolist = new ArrayList<String>();
+		ArrayList<Account> list = new ArrayList<Account>();
+		fuhuolist = new ArrayList<Account>();
 		for (Matching m : this.getM()) {
-			if (m.getLoser() != null && !"".equals(m.getLoser())) list.add(m.getLoser());
-			if(m.getWinner() != null && !"".equals(m.getWinner())) fuhuolist.add(m.getWinner());
+			if (m.getLoser() != null && !"".equals(m.getLoser())) list.add(new Account(m.getLoser()));
+			if(m.getWinner() != null && !"".equals(m.getWinner())) fuhuolist.add(new Account(m.getWinner()));
 		}
 
 		Round r = new Round(round + 1, list);
@@ -217,9 +218,9 @@ public class Round extends JPanel {
 	}
 
 	private void fuhuoend() {
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<Account> list = new ArrayList<Account>();
 		for (Matching m : this.getM()) {
-			if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(m.getWinner());
+			if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(new Account(m.getWinner()));
 		}
 
 		list.addAll(fuhuolist);

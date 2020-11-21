@@ -166,4 +166,53 @@ public class QueryWeb {
 		return matchs;
 	}
 
+	public static List<Account> queryAllByMid(String mid) throws Exception {
+		String loginUrl = "http://" + IPConfig.IP + "/queryallbymid";
+
+		URL url = new URL(loginUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		out.write("mid=" + mid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString);
+
+		List<Account> accs = new ArrayList<>();
+
+		if (result.getInt("code") == Query.QUERY_SUCCESS) {
+			SimpleDateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+			JSONArray accArr = result.getJSONArray("data");
+
+			for (int i = 0; i < accArr.length(); i++) {
+				JSONObject accObj = accArr.getJSONObject(i);
+				Account account = new Account();
+				account.setUid(accObj.getInt("uid"));
+				account.setName(accObj.getString("name"));
+				account.setDate(dateformat.parse(accObj.getString("signupDate")));
+				account.setState(accObj.getInt("state"));
+				
+				accs.add(account);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, result.getString("data"), "错误",JOptionPane.WARNING_MESSAGE);
+		}
+		
+		return accs;
+	}
 }

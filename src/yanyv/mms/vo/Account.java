@@ -8,6 +8,16 @@ public class Account {
 	private String pass = "";
 	private Date date;
 	private String email = "";
+	private int state;
+	
+	public Account() {
+		
+	}
+	
+	public Account(String name) {
+		this.name = name;
+	}
+	
 	public int getUid() {
 		return uid;
 	}
@@ -38,4 +48,19 @@ public class Account {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		// TODO Auto-generated method stub
+		this.state = state;
+	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return name;
+	}
+	
+	
 }

@@ -17,12 +17,12 @@ public class PicShower extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int rgb = img.getRGB((int) (e.getX() * 2.5), (int) (e.getY() * 2.5));
+				/*int rgb = img.getRGB((int) (e.getX() * 2.5), (int) (e.getY() * 2.5));
 				Color color = new Color(rgb);
 				int r = color.getRed();
 				int g = color.getGreen();
 				int b = color.getBlue();
-				System.out.println("location: " + (e.getX() * 2.5) + ", " + (e.getY() * 2.5) + "r: " + r + " g: " + g + " b: " + b);
+				System.out.println("location: " + (e.getX() * 2.5) + ", " + (e.getY() * 2.5) + "r: " + r + " g: " + g + " b: " + b);*/
 			}
 			
 		});

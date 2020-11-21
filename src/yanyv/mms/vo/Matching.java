@@ -46,14 +46,14 @@ public class Matching {
 
 	public Matching(JSONArray info) {
 		System.out.println(info);
-		setP1(new Person(info.getJSONObject(0).getString("name")));
+		setP1(new Person(new Account(info.getJSONObject(0).getString("name"))));
 		getP1().setMatch(this);
 		vs = new JLabel("ÂÖ¿Õ", JLabel.CENTER);
 		vs.setSize(200, 40);
 		vs.setFont(font);
 
 		if (info.length() != 1) {
-			setP2(new Person(info.getJSONObject(1).getString("name")));
+			setP2(new Person(new Account(info.getJSONObject(1).getString("name"))));
 			getP2().setMatch(this);
 			vs.setText("VS");
 		}
@@ -85,7 +85,7 @@ public class Matching {
 			l.setLocation(vs.getLocation().x + 160, getP1().getLocation().y);
 			l.setFont(font);
 
-			Person win = new Person(getP1().getText());
+			Person win = new Person(new Account(getP1().getText()));
 
 			win.setLocation(vs.getLocation().x + 270, getP1().getLocation().y);
 
@@ -113,7 +113,7 @@ public class Matching {
 			l.setLocation(vs.getLocation().x + 160, getP1().getLocation().y);
 			l.setFont(font);
 
-			Person win = new Person(p.getText());
+			Person win = new Person(new Account(p.getText()));
 
 			win.setLocation(vs.getLocation().x + 270, vs.getLocation().y);
 

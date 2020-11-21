@@ -9,6 +9,9 @@ import javax.swing.JButton;
 
 import org.json.JSONObject;
 
+import yanyv.mms.Window.MainWindow;
+import yanyv.mms.Window.MatchWindow;
+import yanyv.mms.vo.Account;
 import yanyv.mms.vo.Matching;
 
 public class Person extends JButton {
@@ -17,15 +20,21 @@ public class Person extends JButton {
 	
 	Person p = this;
 	Matching m;
+	Account acc;
 	
 	private boolean win = false;
 	
-	public Person(String name) {
-		this.setText(name);
+	public Person(Account acc) {
+		this.acc = acc;
+		this.setText(acc.getName());
 		this.setSize(200, 30);
 		this.setFont(font);
 		this.setMargin(new Insets(0, 0, 0, 0));
-		this.setToolTipText(name);
+		if(MatchWindow.isWeb) {
+			this.setToolTipText(acc.getUid()+"");
+		} else {
+			this.setToolTipText(acc.getName());
+		}
 		
 		this.addMouseListener(new MouseAdapter() {
 

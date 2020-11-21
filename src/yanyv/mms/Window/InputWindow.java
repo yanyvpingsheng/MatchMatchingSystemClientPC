@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -31,7 +32,9 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
 import yanyv.mms.view.PicShower;
+import yanyv.mms.vo.Account;
 import yanyv.mms.web.IPConfig;
+import yanyv.mms.web.QueryWeb;
 
 public class InputWindow extends JFrame {
 
@@ -39,7 +42,8 @@ public class InputWindow extends JFrame {
 	private int incount = 0;
 	private String name = "";
 	private boolean fuhuo = false;
-	
+
+	Thread webRefresh;
 	private boolean web = false;
 	private String mid = "";
 
@@ -55,8 +59,8 @@ public class InputWindow extends JFrame {
 
 	JScrollPane listPane;
 
-	DefaultListModel<String> listModel;
-	JList<String> list;
+	DefaultListModel<Account> listModel;
+	JList<Account> list;
 
 	JButton del;
 
@@ -65,7 +69,7 @@ public class InputWindow extends JFrame {
 	JTextField nameInput;
 	JButton sure;
 	JButton apply;
-	
+
 	// web view
 	PicShower qrCode;
 
@@ -82,10 +86,11 @@ public class InputWindow extends JFrame {
 			@Override
 			public void componentHidden(ComponentEvent arg0) {
 				if (!applyed) {
-					if(lastWindow.getClass().getName().equals("yanyv.mms.Window.SettingWindow")) {
+					if (lastWindow.getClass().getName().equals("yanyv.mms.Window.SettingWindow")) {
 						((SettingWindow) lastWindow).applyed = false;
-						if(web) lastWindow.setVisible(false);
-					} else if(lastWindow.getClass().getName().equals("yanyv.mms.Window.ConWindow")) {
+						if (web)
+							lastWindow.setVisible(false);
+					} else if (lastWindow.getClass().getName().equals("yanyv.mms.Window.ConWindow")) {
 						((ConWindow) lastWindow).applyed = false;
 					}
 					lastWindow.setVisible(true);
@@ -104,8 +109,8 @@ public class InputWindow extends JFrame {
 		progress.setLocation(45, 5);
 		progress.setFont(font);
 
-		listModel = new DefaultListModel<String>();
-		list = new JList<String>(listModel);
+		listModel = new DefaultListModel<Account>();
+		list = new JList<Account>(listModel);
 		list.setSize(300, 2000);
 		list.setFont(font);
 
@@ -139,7 +144,7 @@ public class InputWindow extends JFrame {
 		apply.setSize(100, 30);
 		apply.setLocation(345, 215);
 		apply.setFont(font);
-		
+
 		// web view
 		qrCode = new PicShower();
 
@@ -166,20 +171,7 @@ public class InputWindow extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == 10) {
-					String name = nameInput.getText();
-					if (name.equals("")) {
-						JOptionPane.showMessageDialog(null, "输入为空", "警告", JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-					if (incount < count) {
-						listModel.addElement(name);
-						incount++;
-						progress.setText(incount + "/" + count);
-						nameInput.setText("");
-					} else {
-						JOptionPane.showMessageDialog(null, "参赛人员已满，" + name + " 未能加入到参赛人员列表中！", "警告",
-								JOptionPane.WARNING_MESSAGE);
-					}
+					addToList();
 				}
 			}
 
@@ -188,21 +180,7 @@ public class InputWindow extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				String name = nameInput.getText();
-				if (name.equals("")) {
-					JOptionPane.showMessageDialog(null, "输入为空", "警告", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				if (incount < count) {
-					listModel.addElement(name);
-					incount++;
-					progress.setText(incount + "/" + count);
-					nameInput.setText("");
-				} else {
-					JOptionPane.showMessageDialog(null, "参赛人员已满，" + name + " 未能加入到参赛人员列表中！", "警告",
-							JOptionPane.WARNING_MESSAGE);
-				}
-
+				addToList();
 			}
 
 		});
@@ -211,7 +189,7 @@ public class InputWindow extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				ArrayList<String> all = new ArrayList<String>();
+				ArrayList<Account> all = new ArrayList<Account>();
 				for (int i = 0; i < listModel.getSize(); i++) {
 					all.add(listModel.getElementAt(i));
 				}
@@ -247,12 +225,15 @@ public class InputWindow extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				for (int i = incount; i < count; i++) {
-					listModel.addElement(Math.random() * 500 + "");
-					incount++;
-					progress.setText(incount + "/" + count);
-					nameInput.setText("");
-				}
+				if (web) {
+					JOptionPane.showMessageDialog(null, "该测试功能于网络模式不可用", "警告", JOptionPane.WARNING_MESSAGE);
+				} else
+					for (int i = incount; i < count; i++) {
+						listModel.addElement(new Account((int) (Math.random() * 500) + ""));
+						incount++;
+						progress.setText(incount + "/" + count);
+						nameInput.setText("");
+					}
 			}
 
 		});
@@ -278,12 +259,34 @@ public class InputWindow extends JFrame {
 	}
 
 	public void setWeb(boolean web) {
+		if (web) {
+			webRefresh = new Thread() {
+
+				@Override
+				public void run() {
+					try {
+						while (true) {
+							List<Account> accs = QueryWeb.queryAllByMid(mid);
+							listModel.clear();
+							for (Account acc : accs) {
+								listModel.addElement(acc);
+							}
+							Thread.sleep(1000);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			};
+			webRefresh.start();
+		}
 		if (!this.web && web) {
 			listPane.setSize(listPane.getSize().width / 2, listPane.getSize().height);
 			listPane.setLocation(listPane.getLocation().x + listPane.getSize().width, listPane.getLocation().y);
-			
+
 			String url = IPConfig.IP + "/enroll?mid=" + mid;
-			
+
 			int size = 450;
 			Hashtable<EncodeHintType, String> hints = new Hashtable<>();
 			hints.put(EncodeHintType.CHARACTER_SET, "UTF-8"); // 字符转码格式设置
@@ -302,12 +305,12 @@ public class InputWindow extends JFrame {
 						}
 					}
 				}
-				
+
 				String[] strs = new String[3];
 				strs[0] = mid.substring(0, 5);
 				strs[1] = mid.substring(5, 9);
 				strs[2] = mid.substring(9, 13);
-				
+
 				// 下方文字
 				Font font = new Font("楷体", Font.BOLD, 45);
 				Graphics2D painter = (Graphics2D) img.getGraphics();
@@ -330,15 +333,45 @@ public class InputWindow extends JFrame {
 		}
 		this.web = web;
 	}
-	
 
 	public String getMid() {
 		return mid;
 	}
-	
 
 	public void setMid(String mid) {
 		this.mid = mid;
 	}
+
+	private void addToList() {
+		String name = nameInput.getText();
+		if (web) {
+			addToListWeb(name);
+		} else {
+			addToListLocal(name);
+		}
+	}
 	
+	private void addToListWeb(String name) {
+		String reg = "^[0-9]+(.[0-9]+)?$";
+		System.out.println(name.matches(reg));
+		
+	}
+
+	private void addToListLocal(String name) {
+		if (name.equals("")) {
+			JOptionPane.showMessageDialog(null, "输入为空", "警告", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		if (incount < count) {
+			Account acc = new Account();
+			acc.setName(name);
+			listModel.addElement(acc);
+			incount++;
+			progress.setText(incount + "/" + count);
+			nameInput.setText("");
+		} else {
+			JOptionPane.showMessageDialog(null, "参赛人员已满，" + name + " 未能加入到参赛人员列表中！", "警告",
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
 }
