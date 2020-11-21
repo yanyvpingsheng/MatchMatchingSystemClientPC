@@ -7,14 +7,10 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.swing.JOptionPane;
 
 import org.json.JSONArray;
@@ -60,11 +56,16 @@ public class QueryWeb {
 		// System.out.println(sTotalString);
 		JSONObject result = new JSONObject(sTotalString);
 
-		Account acc = new Account();
-		acc.setUid(result.getInt("uid"));
-		acc.setName(result.getString("name"));
-		acc.setEmail(result.getString("email"));
-		acc.setDate(stringToDate(result.getString("date")));
+		Account acc = null;
+		if(result.getInt("code") == Query.QUERY_SUCCESS) {
+			acc = new Account();
+			acc.setUid(result.getInt("uid"));
+			acc.setName(result.getString("name"));
+			acc.setEmail(result.getString("email"));
+			acc.setDate(stringToDate(result.getString("date")));
+		} else {
+			JOptionPane.showMessageDialog(null, result.getString("data"), "´íÎó",JOptionPane.WARNING_MESSAGE);
+		}
 
 		return acc;
 	}

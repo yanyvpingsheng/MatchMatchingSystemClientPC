@@ -35,6 +35,7 @@ import yanyv.mms.view.PicShower;
 import yanyv.mms.vo.Account;
 import yanyv.mms.web.IPConfig;
 import yanyv.mms.web.QueryWeb;
+import yanyv.mms.web.SignupWeb;
 
 public class InputWindow extends JFrame {
 
@@ -353,8 +354,17 @@ public class InputWindow extends JFrame {
 	
 	private void addToListWeb(String name) {
 		String reg = "^[0-9]+(.[0-9]+)?$";
-		System.out.println(name.matches(reg));
 		
+		if(name.matches(reg)) {
+			try {
+				Account acc = QueryWeb.queryUserByUid(Integer.parseInt(name));
+				if(acc != null) {
+					SignupWeb.Signup(acc.getUid(), mid);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void addToListLocal(String name) {
