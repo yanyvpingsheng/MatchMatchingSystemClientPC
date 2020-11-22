@@ -44,6 +44,7 @@ public class ConWindow extends JFrame {
 
 	String info = "";
 	JSONObject matchObj;
+	Match match;
 
 	JFrame main = this;
 	JPanel mainPane;
@@ -303,7 +304,7 @@ public class ConWindow extends JFrame {
 				applyed = true;
 				if (list.getSelectedValue().isWeb()) {
 					InputWindow input = new InputWindow(main);
-					input.setMid(matchObj.getString("mid"));
+					input.setMatch(match);
 					input.setWeb(true);
 					
 					input.setVisible(true);
@@ -395,13 +396,27 @@ public class ConWindow extends JFrame {
 
 	private void getMatchInfo() {
 		try {
+			DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			
 			matchObj = MatchWeb.getMatchInfo(list.getSelectedValue().getMid()).getJSONObject("data");
 			System.out.println(matchObj.toString());
+			
+			match = new Match();
 
-			title.setText(matchObj.getString("name"));
-			modeInfo.setText(matchObj.getInt("mode_id") + "");
+			match.setMid(matchObj.getString("mid"));
+			match.setName(matchObj.getString("name"));
+			match.setModeId(matchObj.getInt("mode_id"));
+			match.setStartDate(format.parse(matchObj.getString("start_datetime")));
+			match.setDeadline(format.parse(matchObj.getString("deadline_datetime")));
+			match.setState(matchObj.getInt("state"));
+			
+			title.setText(match.getName());
+			modeInfo.setText(match.getModeId() + "");
 			startDateInfo.setText(matchObj.getString("start_datetime").substring(0, 10));
 			if (matchObj.has("end_datetime")) {
+				
+				match.setEndDate(format.parse(matchObj.getString("end_datetime")));
+				
 				endDateInfo.setText(matchObj.getString("end_datetime").substring(0, 10));
 			} else {
 				endDateInfo.setText("-");

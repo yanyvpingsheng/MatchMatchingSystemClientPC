@@ -22,7 +22,7 @@ import yanyv.mms.web.QueryWeb;
 public class MainWindow extends JFrame {
 	
 	public static String name = "竞赛匹配系统MMS ";
-	public static String ver = "Ver 0.0.1";
+	public static String ver = "0.0.1";
 	public static String mode = " (离线模式)";
 	private static int windowWidth = 1080;
 	private static int windowHeight = 720;

@@ -13,8 +13,11 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONObject;
 
+import yanyv.mms.code.MatchStart;
 import yanyv.mms.vo.Match;
 
 public class MatchWeb {
@@ -178,5 +181,40 @@ public class MatchWeb {
 		int size = result.getInt("data");
 		
 		return size;
+	}
+	
+	public static boolean startMatch(String mid) throws Exception {
+		String addMatchUrl = "http://" + IPConfig.IP + "/startmatch";
+
+		URL url = new URL(addMatchUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		//OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "gbk");
+		out.write("mid=" + mid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString);
+		
+		if(result.getInt("code") == MatchStart.SUCCESS) {
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(null, result.getString("data"), "警告", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
 	}
 }

@@ -85,7 +85,7 @@ public class Matching {
 			l.setLocation(vs.getLocation().x + 160, getP1().getLocation().y);
 			l.setFont(font);
 
-			Person win = new Person(new Account(getP1().getText()));
+			Person win = new Person(getP1().getAccount());
 
 			win.setLocation(vs.getLocation().x + 270, getP1().getLocation().y);
 
@@ -113,8 +113,8 @@ public class Matching {
 			l.setLocation(vs.getLocation().x + 160, getP1().getLocation().y);
 			l.setFont(font);
 
-			Person win = new Person(new Account(p.getText()));
-
+			Person win = new Person(p.getAccount());
+			
 			win.setLocation(vs.getLocation().x + 270, vs.getLocation().y);
 
 			round.add(l);
@@ -125,24 +125,24 @@ public class Matching {
 		}
 	}
 
-	public String getWinner() {
+	public Person getWinner() {
 
 		if (getP1().isWin()) {
-			return getP1().getText();
+			return getP1();
 		} else if(getP2().isWin()) {
-			return getP2().getText();
+			return getP2();
 		} else return null;
 	}
 
-	public String getLoser() {
+	public Person getLoser() {
 
 		if (getP2() == null)
 			return null;
 		if (!getP1().isWin() && !getP2().isWin()) return null;
 		if (!getP1().isWin()) {
-			return getP1().getText();
+			return getP1();
 		} else if(!getP2().isWin()){
-			return getP2().getText();
+			return getP2();
 		}
 		
 		return null;

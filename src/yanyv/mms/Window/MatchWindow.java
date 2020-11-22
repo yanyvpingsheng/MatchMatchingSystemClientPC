@@ -28,8 +28,11 @@ import yanyv.mms.manager.JSONManager;
 import yanyv.mms.manager.SaveManager;
 import yanyv.mms.view.Round;
 import yanyv.mms.vo.Account;
+import yanyv.mms.vo.Match;
 
 public class MatchWindow extends JFrame {
+	
+	private Match match;
 	
 	public static boolean isWeb = false;
 	ArrayList<Account> list;
@@ -336,5 +339,14 @@ public class MatchWindow extends JFrame {
 	
 	public void setWeb(boolean web) {
 		this.isWeb = web;
+	}
+
+	public Match getMatch() {
+		return match;
+	}
+
+	public void setMatch(Match match) {
+		this.match = match;
+		this.setTitle(match.getName() + "(" + match.getMid() + ")" + this.getTitle());
 	}
 }

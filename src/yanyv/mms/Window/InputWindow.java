@@ -11,7 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -33,7 +36,9 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 import yanyv.mms.view.PicShower;
 import yanyv.mms.vo.Account;
+import yanyv.mms.vo.Match;
 import yanyv.mms.web.IPConfig;
+import yanyv.mms.web.MatchWeb;
 import yanyv.mms.web.QueryWeb;
 import yanyv.mms.web.SignupWeb;
 
@@ -44,9 +49,9 @@ public class InputWindow extends JFrame {
 	private String name = "";
 	private boolean fuhuo = false;
 
-	Thread webRefresh;
+	private Thread webRefresh;
 	private boolean web = false;
-	private String mid = "";
+	private Match match;
 
 	private static int windowWidth = 500;
 	private static int windowHeight = 300;
@@ -74,7 +79,7 @@ public class InputWindow extends JFrame {
 	// web view
 	PicShower qrCode;
 
-	MatchWindow match;
+	MatchWindow matchWin;
 
 	public InputWindow(JFrame lastWindow) {
 
@@ -95,9 +100,9 @@ public class InputWindow extends JFrame {
 						} else {
 							lastWindow.setVisible(true);
 						}
-						
+
 					} else if (lastWindow.getClass().getName().equals("yanyv.mms.Window.ConWindow")) {
-						
+
 						((ConWindow) lastWindow).applyed = false;
 						lastWindow.setVisible(true);
 					}
@@ -168,7 +173,7 @@ public class InputWindow extends JFrame {
 
 		this.setContentPane(mainPane);
 
-		match = new MatchWindow();
+		matchWin = new MatchWindow();
 	}
 
 	private void addListener() {
@@ -196,18 +201,55 @@ public class InputWindow extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				ArrayList<Account> all = new ArrayList<Account>();
-				for (int i = 0; i < listModel.getSize(); i++) {
-					all.add(listModel.getElementAt(i));
+				DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date now = new Date();
+				if (web && match.getState() == 4) {
+					JOptionPane.showMessageDialog(null, "该比赛已取消", "警告", JOptionPane.WARNING_MESSAGE);
+				} else if (web && match.getStartDate().after(now)) {
+					JOptionPane.showMessageDialog(null, "未到开赛日期，预定的开赛日为：" + format.format(match.getStartDate()), "警告",
+							JOptionPane.WARNING_MESSAGE);
+				} else {
+
+					boolean startSuccess = true;
+					if (web) {
+
+						if (match.getState() == 1) {
+							try {
+								startSuccess = MatchWeb.startMatch(match.getMid());
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
+					}
+
+					ArrayList<Account> all = new ArrayList<Account>();
+					for (int i = 0; i < listModel.getSize(); i++) {
+						all.add(listModel.getElementAt(i));
+					}
+
+					applyed = true;
+					matchWin.setWeb(web);
+					matchWin.setArray(all);
+					main.setVisible(false);
+					matchWin.setVisible(true);
+
+					matchWin.setName(name);
+					matchWin.setFuhuo(fuhuo);
+
+					if (web && startSuccess) {
+
+						switch (match.getModeId()) {
+						case 1:
+							matchWin.setFuhuo(false);
+							break;
+						case 2:
+							matchWin.setFuhuo(true);
+							break;
+						}
+						matchWin.setMatch(match);
+					}
 				}
-
-				applyed = true;
-				match.setArray(all);
-				main.setVisible(false);
-				match.setVisible(true);
-
-				match.setName(name);
-				match.setFuhuo(fuhuo);
 
 			}
 
@@ -273,7 +315,7 @@ public class InputWindow extends JFrame {
 				public void run() {
 					try {
 						while (true) {
-							List<Account> accs = QueryWeb.queryAllByMid(mid);
+							List<Account> accs = QueryWeb.queryAllByMid(match.getMid());
 							listModel.clear();
 							for (Account acc : accs) {
 								listModel.addElement(acc);
@@ -292,7 +334,7 @@ public class InputWindow extends JFrame {
 			listPane.setSize(listPane.getSize().width / 2, listPane.getSize().height);
 			listPane.setLocation(listPane.getLocation().x + listPane.getSize().width, listPane.getLocation().y);
 
-			String url = IPConfig.IP + "/signup?mid=" + mid;
+			String url = IPConfig.IP + "/signup?mid=" + match.getMid();
 
 			int size = 450;
 			Hashtable<EncodeHintType, String> hints = new Hashtable<>();
@@ -314,9 +356,9 @@ public class InputWindow extends JFrame {
 				}
 
 				String[] strs = new String[3];
-				strs[0] = mid.substring(0, 5);
-				strs[1] = mid.substring(5, 9);
-				strs[2] = mid.substring(9, 13);
+				strs[0] = match.getMid().substring(0, 5);
+				strs[1] = match.getMid().substring(5, 9);
+				strs[2] = match.getMid().substring(9, 13);
 
 				// 下方文字
 				Font font = new Font("楷体", Font.BOLD, 45);
@@ -342,11 +384,12 @@ public class InputWindow extends JFrame {
 	}
 
 	public String getMid() {
-		return mid;
+		return match.getMid();
 	}
 
-	public void setMid(String mid) {
-		this.mid = mid;
+	public void setMatch(Match match) {
+		this.match = match;
+		this.setTitle(match.getName() + "(" + match.getMid() + ")" + this.getTitle());
 	}
 
 	private void addToList() {
@@ -365,7 +408,7 @@ public class InputWindow extends JFrame {
 			try {
 				Account acc = QueryWeb.queryUserByUid(Integer.parseInt(name));
 				if (acc != null) {
-					SignupWeb.Signup(acc.getUid(), mid);
+					SignupWeb.Signup(acc.getUid(), match.getMid());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

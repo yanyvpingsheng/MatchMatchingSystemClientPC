@@ -20,7 +20,7 @@ public class Person extends JButton {
 	
 	Person p = this;
 	Matching m;
-	Account acc;
+	private Account acc;
 	
 	private boolean win = false;
 	
@@ -67,4 +67,7 @@ public class Person extends JButton {
 		this.win = win;
 	}
 	
+	public Account getAccount() {
+		return acc;
+	}
 }

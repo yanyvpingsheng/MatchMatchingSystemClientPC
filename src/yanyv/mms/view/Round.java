@@ -173,7 +173,7 @@ public class Round extends JPanel {
 		} else {
 			ArrayList<Account> list = new ArrayList<Account>();
 			for (Matching m : this.getM()) {
-				if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(new Account(m.getWinner()));
+				if(m.getWinner() != null) list.add(m.getWinner().getAccount());
 			}
 
 			Round r = new Round(round + 1, list);
@@ -199,8 +199,8 @@ public class Round extends JPanel {
 		ArrayList<Account> list = new ArrayList<Account>();
 		fuhuolist = new ArrayList<Account>();
 		for (Matching m : this.getM()) {
-			if (m.getLoser() != null && !"".equals(m.getLoser())) list.add(new Account(m.getLoser()));
-			if(m.getWinner() != null && !"".equals(m.getWinner())) fuhuolist.add(new Account(m.getWinner()));
+			if (m.getLoser() != null) list.add(m.getLoser().getAccount());
+			if(m.getWinner() != null) fuhuolist.add(m.getWinner().getAccount());
 		}
 
 		Round r = new Round(round + 1, list);
@@ -220,7 +220,7 @@ public class Round extends JPanel {
 	private void fuhuoend() {
 		ArrayList<Account> list = new ArrayList<Account>();
 		for (Matching m : this.getM()) {
-			if(m.getWinner() != null && !"".equals(m.getWinner())) list.add(new Account(m.getWinner()));
+			if(m.getWinner() != null) list.add(m.getWinner().getAccount());
 		}
 
 		list.addAll(fuhuolist);
@@ -250,6 +250,9 @@ public class Round extends JPanel {
 				}
 				
 				if(e.getButton() == 3) {
+					for(Matching matching : m) {
+						matching.setFinish(true);
+					}
 					doNext();
 				}
 			}
