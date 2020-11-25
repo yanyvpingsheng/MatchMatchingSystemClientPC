@@ -381,6 +381,7 @@ public class SettingWindow extends JFrame {
 						mat.setDeadline(deadDate);
 						try {
 							JSONObject result = MatchWeb.addMatchs(mat);
+							mat.setMid(result.getString("mid"));
 							input.setMatch(mat);
 							System.out.println(result);
 

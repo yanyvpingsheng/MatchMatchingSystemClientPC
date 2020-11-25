@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
@@ -52,6 +56,7 @@ public class InputWindow extends JFrame {
 	private Thread webRefresh;
 	private boolean web = false;
 	private Match match;
+	private String url;
 
 	private static int windowWidth = 500;
 	private static int windowHeight = 300;
@@ -286,6 +291,16 @@ public class InputWindow extends JFrame {
 			}
 
 		});
+		
+		qrCode.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setSysClipboardText("报名地址: " + url + "\n 赛事编号: " + match.getMid());
+				JOptionPane.showMessageDialog(null, "赛事链接已复制到剪贴板", "提示", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+		});
 
 	}
 
@@ -334,7 +349,7 @@ public class InputWindow extends JFrame {
 			listPane.setSize(listPane.getSize().width / 2, listPane.getSize().height);
 			listPane.setLocation(listPane.getLocation().x + listPane.getSize().width, listPane.getLocation().y);
 
-			String url = IPConfig.IP + "/signup?mid=" + match.getMid();
+			url = IPConfig.IP + "/signup?mid=" + match.getMid();
 
 			int size = 450;
 			Hashtable<EncodeHintType, String> hints = new Hashtable<>();
@@ -432,4 +447,11 @@ public class InputWindow extends JFrame {
 			JOptionPane.showMessageDialog(null, "参赛人员已满，" + name + " 未能加入到参赛人员列表中！", "警告", JOptionPane.WARNING_MESSAGE);
 		}
 	}
+	
+	private void setSysClipboardText(String str) {  
+		// 写入剪贴板
+        Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();  
+        Transferable tText = new StringSelection(str);  
+        clip.setContents(tText, null);  
+    }
 }
