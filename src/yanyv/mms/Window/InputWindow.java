@@ -235,6 +235,9 @@ public class InputWindow extends JFrame {
 
 					applyed = true;
 					matchWin.setWeb(web);
+					
+					if (web && startSuccess) matchWin.setMatch(match);
+					
 					matchWin.setArray(all);
 					main.setVisible(false);
 					matchWin.setVisible(true);
@@ -252,7 +255,7 @@ public class InputWindow extends JFrame {
 							matchWin.setFuhuo(true);
 							break;
 						}
-						matchWin.setMatch(match);
+						
 					}
 				}
 

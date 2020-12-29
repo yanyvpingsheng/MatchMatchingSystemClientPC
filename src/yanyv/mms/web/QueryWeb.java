@@ -94,7 +94,8 @@ public class QueryWeb {
 			sTotalString += sCurrentLine + "\r\n";
 		}
 		// System.out.println(sTotalString);
-		JSONArray result = new JSONArray(sTotalString);
+		JSONObject json = new JSONObject(sTotalString);
+		JSONArray result = json.getJSONArray("data");
 
 		List<MatchMode> modes = new ArrayList<>();
 
@@ -216,4 +217,45 @@ public class QueryWeb {
 		
 		return accs;
 	}
+	
+	public static JSONObject queryMatchData(String mid) throws Exception {
+		String stringUrl = "http://" + IPConfig.IP + "/querymatchdata";
+
+		URL url = new URL(stringUrl);
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream(), "8859_1");
+		out.write("mid=" + mid);
+		out.flush();
+		out.close();
+
+		// 一旦发送成功，用以下方法就可以得到服务器的回应：
+		String sCurrentLine;
+		String sTotalString;
+		sCurrentLine = "";
+		sTotalString = "";
+		InputStream l_urlStream;
+		l_urlStream = conn.getInputStream();
+		// 三层包装
+		BufferedReader l_reader = new BufferedReader(new InputStreamReader(l_urlStream));
+		while ((sCurrentLine = l_reader.readLine()) != null) {
+			sTotalString += sCurrentLine + "\r\n";
+		}
+		// System.out.println(sTotalString);
+		JSONObject result = new JSONObject(sTotalString);
+		JSONObject data = null;
+
+		List<Account> accs = new ArrayList<>();
+
+		if (result.getInt("code") == Query.QUERY_SUCCESS) {
+			SimpleDateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			data = result.getJSONObject("data");
+			
+		} else {
+			JOptionPane.showMessageDialog(null, result.getString("data"), "错误",JOptionPane.WARNING_MESSAGE);
+		}
+		
+		return data;
+	}
+	
 }

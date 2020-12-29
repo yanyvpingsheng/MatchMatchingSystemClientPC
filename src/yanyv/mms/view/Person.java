@@ -19,7 +19,7 @@ public class Person extends JButton {
 	private Font font = new Font("¿¬Ìå",Font.BOLD,15);
 	
 	Person p = this;
-	Matching m;
+	Matching matching;
 	private Account acc;
 	
 	private boolean win = false;
@@ -41,14 +41,14 @@ public class Person extends JButton {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				setWin(true);
-				if(m != null) m.win(p);
+				if(matching != null) matching.win(p);
 			}
 			
 		});
 	}
 	
 	public void setMatch(Matching m) {
-		this.m = m;
+		this.matching = m;
 	}
 	
 	public JSONObject save() {

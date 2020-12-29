@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -21,6 +22,8 @@ import org.json.JSONObject;
 import yanyv.mms.Window.MatchWindow;
 import yanyv.mms.vo.Account;
 import yanyv.mms.vo.Matching;
+import yanyv.mms.web.MatchingWeb;
+import yanyv.mms.web.RoundWeb;
 
 public class Round extends JPanel {
 
@@ -42,13 +45,15 @@ public class Round extends JPanel {
 	ArrayList<Account> list;
 
 	private Font font = new Font("楷体", Font.BOLD, 30);
-	String title = "";
+	String title = "---";
 	
 	public Round() {
 		
 	}
 
 	public Round(int round, ArrayList<Account> list) {
+		// 首次创建
+		// 从MatchWindow.isWeb取得是否启用云
 		this.round = round;
 		this.list = list;
 
@@ -74,6 +79,22 @@ public class Round extends JPanel {
 		titEdit.setFont(font);
 		titEdit.setVisible(false);
 		this.add(titEdit);
+		
+		if(MatchWindow.isWeb) {
+			// 上传本轮信息
+			try {
+				JSONObject result = RoundWeb.addRound(this);
+				if(result.has("code") && result.getInt("code") == 200) {
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "云同步失败 " + result.getString("data"), "警告", JOptionPane.WARNING_MESSAGE);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "网络异常，同步失败", "警告", JOptionPane.WARNING_MESSAGE);
+			}
+		}
 
 		Matching match;
 		for (int i = 0; i < list.size(); i += 2) {
@@ -86,6 +107,18 @@ public class Round extends JPanel {
 			match.addin(this);
 			getM().add(match);
 			top += 100;
+			
+			if(MatchWindow.isWeb) {
+				// 同步配对信息
+				try {
+					MatchingWeb.addMatching(this, match, getM().indexOf(match));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "网络异常，同步失败", "警告", JOptionPane.WARNING_MESSAGE);
+					break;
+				}
+			}
 		}
 
 		addListener();
@@ -268,6 +301,20 @@ public class Round extends JPanel {
 					tit.setText(title);
 					titEdit.setVisible(false);
 					tit.setVisible(true);
+					
+					// 同步标题
+					try {
+						JSONObject result = RoundWeb.updataRound(Round.this);
+						if(result.has("code") && result.getInt("code") == 200) {
+							
+						} else {
+							JOptionPane.showMessageDialog(null, "云同步失败 " + result.getString("data"), "警告", JOptionPane.WARNING_MESSAGE);
+						}
+					} catch (Exception exception) {
+						// TODO Auto-generated catch block
+						exception.printStackTrace();
+						JOptionPane.showMessageDialog(null, "网络异常，同步失败", "警告", JOptionPane.WARNING_MESSAGE);
+					}
 				}
 			}
 
@@ -296,6 +343,22 @@ public class Round extends JPanel {
 			}
 
 			tit.setText(title);
+			
+			if(MatchWindow.isWeb) {
+				// 同步标题
+				try {
+					JSONObject result = RoundWeb.updataRound(this);
+					if(result.has("code") && result.getInt("code") == 200) {
+						
+					} else {
+						JOptionPane.showMessageDialog(null, "云同步失败 " + result.getString("data"), "警告", JOptionPane.WARNING_MESSAGE);
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "网络异常，同步失败", "警告", JOptionPane.WARNING_MESSAGE);
+				}
+			}
 		}
 
 	}
@@ -328,6 +391,22 @@ public class Round extends JPanel {
 
 	public void setM(ArrayList<Matching> m) {
 		this.m = m;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getRound() {
+		return round;
+	}
+
+	public void setRound(int round) {
+		this.round = round;
 	}
 
 }

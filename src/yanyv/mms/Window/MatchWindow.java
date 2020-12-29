@@ -32,7 +32,7 @@ import yanyv.mms.vo.Match;
 
 public class MatchWindow extends JFrame {
 	
-	private Match match;
+	public static Match match;
 	
 	public static boolean isWeb = false;
 	ArrayList<Account> list;
@@ -346,7 +346,7 @@ public class MatchWindow extends JFrame {
 	}
 
 	public void setMatch(Match match) {
-		this.match = match;
+		MatchWindow.match = match;
 		this.setTitle(match.getName() + "(" + match.getMid() + ")" + this.getTitle());
 	}
 }

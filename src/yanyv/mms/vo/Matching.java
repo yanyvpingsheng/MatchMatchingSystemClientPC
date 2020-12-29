@@ -4,15 +4,20 @@ import java.awt.Font;
 import java.awt.Panel;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import yanyv.mms.Window.MatchWindow;
 import yanyv.mms.view.Person;
 import yanyv.mms.view.Round;
+import yanyv.mms.web.MatchingWeb;
 
 public class Matching {
+	
+	private boolean opening = false;
 
 	private Person p1;
 	private Person p2;
@@ -45,18 +50,40 @@ public class Matching {
 	}
 
 	public Matching(JSONArray info) {
+		opening = true;
 		System.out.println(info);
-		setP1(new Person(new Account(info.getJSONObject(0).getString("name"))));
+		
+		Account acc1 = new Account(info.getJSONObject(0).getString("name"));
+		
+		if(MatchWindow.isWeb) {
+			acc1.setUid(info.getJSONObject(0).getInt("uid"));
+		}
+		
+		setP1(new Person(acc1));
 		getP1().setMatch(this);
 		vs = new JLabel("ÂÖ¿Õ", JLabel.CENTER);
 		vs.setSize(200, 40);
 		vs.setFont(font);
 
+		
+		
 		if (info.length() != 1) {
-			setP2(new Person(new Account(info.getJSONObject(1).getString("name"))));
+			
+			Account acc2 = new Account(info.getJSONObject(1).getString("name"));
+			
+			if(MatchWindow.isWeb) {
+				acc2.setUid(info.getJSONObject(1).getInt("uid"));
+			}
+			
+			setP2(new Person(acc2));
 			getP2().setMatch(this);
 			vs.setText("VS");
+			
+			
+			
 		}
+		
+		opening = false;
 
 	}
 
@@ -117,6 +144,16 @@ public class Matching {
 			
 			win.setLocation(vs.getLocation().x + 270, vs.getLocation().y);
 
+			if(MatchWindow.isWeb && !opening ) {
+				try {
+					MatchingWeb.updateWinner(round, this);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "ÍøÂçÒì³££¬Í¬²½Ê§°Ü", "¾¯¸æ", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+			
 			round.add(l);
 			round.add(win);
 			round.repaint();

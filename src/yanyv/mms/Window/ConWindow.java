@@ -303,29 +303,40 @@ public class ConWindow extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				applyed = true;
 				if (list.getSelectedValue().isWeb()) {
-					InputWindow input = new InputWindow(main);
-					input.setMatch(match);
-					input.setWeb(true);
-					
-					input.setVisible(true);
-					main.setVisible(false);
-					
-					/*if(matchObj.getInt("state") == 1) {
-						DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					if (list.getSelectedValue().getState() == 1) {
+						// 未开始
+						InputWindow input = new InputWindow(main);
+						input.setMatch(match);
+						input.setWeb(true);
+
+						input.setVisible(true);
+						main.setVisible(false);
+					} else if(list.getSelectedValue().getState() == 2 || list.getSelectedValue().getState() == 3 ) {
+						MatchWindow match = new MatchWindow();
+
+						main.setVisible(false);
+						match.setVisible(true);
+
 						try {
-							Date startDate = format.parse(matchObj.getString("start_datetime"));
-							Date now = new Date();
-							if(now.before(startDate)) {
-								
-							} else {
-								System.out.println("比赛开始");
-							}
-						} catch (JSONException e1) {
+							MatchWindow.isWeb = true;
+							MatchWindow.match = ConWindow.this.match; 
+							match.open(QueryWeb.queryMatchData(list.getSelectedValue().getMid()).toString());
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
 							e1.printStackTrace();
-						} catch (ParseException e1) {
-							e1.printStackTrace();
+							JOptionPane.showMessageDialog(null, "网络异常，同步失败", "警告", JOptionPane.WARNING_MESSAGE);
 						}
-					}*/
+					}
+
+					/*
+					 * if(matchObj.getInt("state") == 1) { DateFormat format = new
+					 * SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); try { Date startDate =
+					 * format.parse(matchObj.getString("start_datetime")); Date now = new Date();
+					 * if(now.before(startDate)) {
+					 * 
+					 * } else { System.out.println("比赛开始"); } } catch (JSONException e1) {
+					 * e1.printStackTrace(); } catch (ParseException e1) { e1.printStackTrace(); } }
+					 */
 				} else {
 					MatchWindow match = new MatchWindow();
 
@@ -397,10 +408,10 @@ public class ConWindow extends JFrame {
 	private void getMatchInfo() {
 		try {
 			DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			
+
 			matchObj = MatchWeb.getMatchInfo(list.getSelectedValue().getMid()).getJSONObject("data");
 			System.out.println(matchObj.toString());
-			
+
 			match = new Match();
 
 			match.setMid(matchObj.getString("mid"));
@@ -409,14 +420,14 @@ public class ConWindow extends JFrame {
 			match.setStartDate(format.parse(matchObj.getString("start_datetime")));
 			match.setDeadline(format.parse(matchObj.getString("deadline_datetime")));
 			match.setState(matchObj.getInt("state"));
-			
+
 			title.setText(match.getName());
 			modeInfo.setText(match.getModeId() + "");
 			startDateInfo.setText(matchObj.getString("start_datetime").substring(0, 10));
 			if (matchObj.has("end_datetime")) {
-				
+
 				match.setEndDate(format.parse(matchObj.getString("end_datetime")));
-				
+
 				endDateInfo.setText(matchObj.getString("end_datetime").substring(0, 10));
 			} else {
 				endDateInfo.setText("-");
@@ -442,7 +453,7 @@ public class ConWindow extends JFrame {
 	}
 
 	private void getMatchState(int msid) throws Exception {
-		/*switch(msid) {
+		switch (msid) {
 		case 1:
 			open.setText("开始");
 			break;
@@ -455,7 +466,7 @@ public class ConWindow extends JFrame {
 		case 4:
 			open.setText("打开");
 			break;
-		}*/
+		}
 		String state = MatchWeb.getMatchState(msid);
 		stateInfo.setText(state);
 	}
@@ -487,7 +498,7 @@ public class ConWindow extends JFrame {
 		stateInfo.setVisible(false);
 		sizeInfo.setVisible(false);
 		createDateInfo.setVisible(false);
-		
+
 		open.setText("打开");
 	}
 
